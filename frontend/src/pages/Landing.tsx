@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 const HIGHLIGHTS = [
   { icon: '🏍️', title: 'Authentic Local Experience', desc: 'Ride with lifelong Ha Giang locals who know every hidden trail and family guesthouse.' },
   { icon: '🌄', title: 'Karst Mountain Scenery', desc: 'Navigate UNESCO-listed limestone peaks and terraced rice fields few tourists ever see.' },
-  { icon: '💰', title: 'Fair & Transparent Pricing', desc: 'Pay just 20% online to secure your spot. The rest goes directly to your guide in cash.' },
+  { icon: '💰', title: 'Fair & Transparent Pricing', desc: 'Simple flat-rate pricing — book your spot online and pay your guide in cash on the day.' },
   { icon: '📱', title: 'Small Groups Only', desc: 'Max 8 people per departure — personalised attention, not a convoy.' },
 ]
 
@@ -35,8 +35,8 @@ export default function Landing() {
           </h1>
           <p className="text-lg sm:text-xl text-stone-300 max-w-2xl mx-auto mb-10">
             A 4-day motorbike journey through Vietnam's untamed far north — arranged for
-            you by people who were born here. Secure your spot with a <strong className="text-white">20% deposit</strong>,
-            pay the rest to your guide in cash.
+            you by people who were born here. Book your spot online and
+            <strong className="text-white"> pay your guide in cash</strong> on the day.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
@@ -107,9 +107,9 @@ export default function Landing() {
         <div className="space-y-4">
           {[
             { n: '01', title: 'Pick a Date', desc: 'Choose from available dates on our live calendar. Spots are limited to 8 per day.' },
-            { n: '02', title: 'Pay 20% Online', desc: 'Secure your place with a deposit via Stripe. This is non-refundable and confirms your booking.' },
+            { n: '02', title: 'Confirm Your Spot', desc: 'Fill in your name and email and hit confirm — no payment required online.' },
             { n: '03', title: 'Meet Your Guide', desc: 'We\'ll send full details by email. Your guide will be waiting for you in Ha Giang city.' },
-            { n: '04', title: 'Pay the Rest in Cash', desc: 'Bring the remaining 80% in cash (VND or USD). It goes straight to your guide.' },
+            { n: '04', title: 'Pay in Cash on the Day', desc: 'Bring the full tour price in cash (VND or USD). It goes straight to your guide.' },
           ].map((step) => (
             <div key={step.n} className="flex gap-5 items-start bg-white rounded-2xl p-5 border border-stone-200 shadow-sm">
               <span className="text-3xl font-black text-brand-200 leading-none flex-shrink-0">{step.n}</span>

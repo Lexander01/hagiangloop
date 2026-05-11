@@ -2,48 +2,32 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Helper: check if the requesting user has a guide or admin role
     function isGuideOrAdmin() {
       return request.auth != null
         && exists(/databases/$(database)/documents/users/$(request.auth.uid))
         && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['guide', 'admin'];
     }
 
-    // ── users collection ────────────────────────────────────────────────────
+    // ── users ────────────────────────────────────────────────────────────────
     match /users/{uid} {
       allow read, write: if isGuideOrAdmin();
     }
 
-    // ── availability collection ──────────────────────────────────────────────
+    // ── availability ─────────────────────────────────────────────────────────
     match /availability/{date} {
-      // Anyone can read availability (needed for the public date picker)
+      // Anyone can read (public calendar)
       allow read: if true;
-
-      // Only guides/admins can write (block/unblock dates, set capacity)
-      // Cloud Functions run with Admin SDK (bypasses rules) and handle spot counts
+      // Only guides/admins write directly; Cloud Functions use Admin SDK (bypasses rules)
       allow write: if isGuideOrAdmin();
     }
 
-    // ── bookings collection ──────────────────────────────────────────────────
+    // ── bookings ─────────────────────────────────────────────────────────────
     match /bookings/{bookingId} {
-      // Authenticated guides/admins can read all bookings
+      // Guides/admins can read all bookings
       allow read: if isGuideOrAdmin();
-
-      // Unauthenticated users may only CREATE a booking with status 'pending'
-      // They may not read, update, or delete
-      allow create: if request.auth == null
-        && request.resource.data.status == 'pending'
-        && request.resource.data.keys().hasAll([
-             'customer_name', 'customer_email', 'date',
-             'pax', 'total_price', 'deposit_paid', 'cash_due',
-             'stripe_session_id'
-           ]);
-
-      // Guides/admins may update (e.g., cancel a booking)
-      allow update: if isGuideOrAdmin();
-
-      // Nobody can delete via client SDK
-      allow delete: if false;
+      // All writes go through the createBooking Cloud Function (Admin SDK),
+      // so no client-side write access is needed
+      allow write: if false;
     }
   }
 }
