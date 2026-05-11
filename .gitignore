@@ -1,0 +1,27 @@
+# Node
+node_modules/
+npm-debug.log*
+yarn-error.log*
+
+# Build outputs
+frontend/dist/
+functions/lib/
+
+# Firebase
+.firebase/
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
+pubsub-debug.log
+
+# Environment variables (NEVER commit these)
+.env
+.env.local
+.env.*.local
+frontend/.env.local
+functions/.env
+
+# IDE
+.DS_Store
+.vscode/
+*.swp

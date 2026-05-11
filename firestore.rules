@@ -1,0 +1,49 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper: check if the requesting user has a guide or admin role
+    function isGuideOrAdmin() {
+      return request.auth != null
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['guide', 'admin'];
+    }
+
+    // ── users collection ────────────────────────────────────────────────────
+    match /users/{uid} {
+      allow read, write: if isGuideOrAdmin();
+    }
+
+    // ── availability collection ──────────────────────────────────────────────
+    match /availability/{date} {
+      // Anyone can read availability (needed for the public date picker)
+      allow read: if true;
+
+      // Only guides/admins can write (block/unblock dates, set capacity)
+      // Cloud Functions run with Admin SDK (bypasses rules) and handle spot counts
+      allow write: if isGuideOrAdmin();
+    }
+
+    // ── bookings collection ──────────────────────────────────────────────────
+    match /bookings/{bookingId} {
+      // Authenticated guides/admins can read all bookings
+      allow read: if isGuideOrAdmin();
+
+      // Unauthenticated users may only CREATE a booking with status 'pending'
+      // They may not read, update, or delete
+      allow create: if request.auth == null
+        && request.resource.data.status == 'pending'
+        && request.resource.data.keys().hasAll([
+             'customer_name', 'customer_email', 'date',
+             'pax', 'total_price', 'deposit_paid', 'cash_due',
+             'stripe_session_id'
+           ]);
+
+      // Guides/admins may update (e.g., cancel a booking)
+      allow update: if isGuideOrAdmin();
+
+      // Nobody can delete via client SDK
+      allow delete: if false;
+    }
+  }
+}

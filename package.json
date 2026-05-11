@@ -1,0 +1,19 @@
+{
+  "name": "hagiangloop",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev":              "cd frontend && npm run dev",
+    "build":            "cd frontend && npm run build",
+    "build:functions":  "cd functions && npm run build",
+    "deploy":           "npm run build && npm run build:functions && firebase deploy",
+    "deploy:hosting":   "npm run build && firebase deploy --only hosting",
+    "deploy:functions": "npm run build:functions && firebase deploy --only functions",
+    "deploy:rules":     "firebase deploy --only firestore:rules,firestore:indexes",
+    "emulators":        "firebase emulators:start",
+    "install:all":      "npm i && cd frontend && npm i && cd ../functions && npm i"
+  },
+  "devDependencies": {
+    "firebase-tools": "^13.0.0"
+  }
+}
