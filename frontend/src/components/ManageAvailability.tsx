@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import {
-  collection, getDocs, query, where, orderBy, limit,
+  collection, getDocs, query, orderBy, limit, documentId, where,
   doc, setDoc, updateDoc,
 } from 'firebase/firestore'
 import {
@@ -26,9 +26,9 @@ export default function ManageAvailability() {
     const snap  = await getDocs(
       query(
         collection(db, 'availability'),
-        where('__name__', '>=', start),
-        where('__name__', '<=', end),
-        orderBy('__name__'),
+        where(documentId(), '>=', start),
+        where(documentId(), '<=', end),
+        orderBy(documentId()),
         limit(31),
       ),
     )

@@ -25,10 +25,17 @@ export default function UpcomingTours() {
       where('date',   '>=', today),
       orderBy('date'),
     )
-    const unsub = onSnapshot(q, (snap) => {
-      setBookings(snap.docs.map((d) => ({ id: d.id, ...d.data() } as Booking)))
-      setLoading(false)
-    })
+    const unsub = onSnapshot(
+      q,
+      (snap) => {
+        setBookings(snap.docs.map((d) => ({ id: d.id, ...d.data() } as Booking)))
+        setLoading(false)
+      },
+      (err) => {
+        console.error('UpcomingTours query failed:', err.message)
+        setLoading(false)
+      },
+    )
     return unsub
   }, [])
 

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { collection, getDocs, query, where } from 'firebase/firestore'
+import { doc, getDoc } from 'firebase/firestore'
 import { db } from '../lib/firebase'
 import type { AvailabilityDay } from '../lib/types'
 import { MAX_SPOTS } from '../lib/constants'
@@ -16,13 +16,11 @@ export default function Booking() {
     setSelectedDate(date)
     setLoadingSpots(true)
     try {
-      const snap = await getDocs(
-        query(collection(db, 'availability'), where('__name__', '==', date)),
-      )
-      if (snap.empty) {
+      const snap = await getDoc(doc(db, 'availability', date))
+      if (!snap.exists()) {
         setAvailableSpots(MAX_SPOTS)
       } else {
-        const avail = snap.docs[0].data() as AvailabilityDay
+        const avail = snap.data() as AvailabilityDay
         const spots = (avail.total_spots ?? MAX_SPOTS) - (avail.booked_spots ?? 0)
         setAvailableSpots(Math.max(0, spots))
       }
